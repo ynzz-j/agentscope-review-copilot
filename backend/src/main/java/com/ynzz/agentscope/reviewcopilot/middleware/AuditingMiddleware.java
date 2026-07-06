@@ -6,15 +6,17 @@ import io.agentscope.core.event.AgentEvent;
 import io.agentscope.core.middleware.MiddlewareBase;
 import io.agentscope.core.middleware.ModelCallInput;
 import java.util.function.Function;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 @Component
 public class AuditingMiddleware implements MiddlewareBase {
 
-    private static final Logger log = LoggerFactory.getLogger(AuditingMiddleware.class);
+    private final ReviewAuditSink auditSink;
+
+    public AuditingMiddleware(ReviewAuditSink auditSink) {
+        this.auditSink = auditSink;
+    }
 
     @Override
     public Flux<AgentEvent> onModelCall(
@@ -26,17 +28,19 @@ public class AuditingMiddleware implements MiddlewareBase {
         int messageCount = input.messages() == null ? 0 : input.messages().size();
         int toolCount = input.tools() == null ? 0 : input.tools().size();
         return next.apply(input)
-                .doOnComplete(() -> log.info(
-                        "agent_model_call agent={} messages={} tools={} elapsedMs={}",
+                .doOnComplete(() -> auditSink.record(AuditRecord.modelCall(
                         agent.getName(),
+                        AuditRecord.Status.SUCCESS,
                         messageCount,
                         toolCount,
-                        (System.nanoTime() - started) / 1_000_000))
-                .doOnError(error -> log.warn(
-                        "agent_model_call_failed agent={} messages={} tools={} error={}",
+                        (System.nanoTime() - started) / 1_000_000,
+                        null)))
+                .doOnError(error -> auditSink.record(AuditRecord.modelCall(
                         agent.getName(),
+                        AuditRecord.Status.FAILED,
                         messageCount,
                         toolCount,
-                        error.toString()));
+                        (System.nanoTime() - started) / 1_000_000,
+                        error.toString())));
     }
 }
