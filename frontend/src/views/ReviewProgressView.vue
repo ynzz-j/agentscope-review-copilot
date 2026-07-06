@@ -20,13 +20,13 @@ onBeforeUnmount(() => store.disconnect())
 <template>
   <section class="page-grid">
     <div>
-      <p class="eyebrow">Review progress</p>
+      <p class="eyebrow">评审进度</p>
       <h1>{{ id }}</h1>
-      <p class="lead">Streaming review events from the backend SSE endpoint.</p>
+      <p class="lead">通过后端 SSE 接口实时接收评审阶段事件。</p>
       <ReviewStatusBadge v-if="store.currentJob" :status="store.currentJob.status" />
       <p v-if="store.error" class="error">{{ store.error }}</p>
       <RouterLink v-if="store.currentJob?.status === 'COMPLETED'" class="button-link" :to="`/reviews/${id}/result`">
-        Open result
+        查看结果
       </RouterLink>
     </div>
 

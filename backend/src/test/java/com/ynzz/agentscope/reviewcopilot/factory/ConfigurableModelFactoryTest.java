@@ -13,6 +13,6 @@ class ConfigurableModelFactoryTest {
 
         assertThatThrownBy(factory::getModel)
                 .isInstanceOf(ModelConfigurationException.class)
-                .hasMessageContaining("Model provider is not configured");
+                .hasMessageContaining("未配置模型提供商");
     }
 }

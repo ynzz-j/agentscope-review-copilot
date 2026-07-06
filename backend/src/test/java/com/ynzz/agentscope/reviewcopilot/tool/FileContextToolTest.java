@@ -36,7 +36,7 @@ class FileContextToolTest {
         assertThat(context)
                 .contains("line 1")
                 .contains("line 20")
-                .contains("[truncated after 20 lines]")
+                .contains("[已在 20 行后截断]")
                 .doesNotContain("line 21");
     }
 
@@ -51,8 +51,8 @@ class FileContextToolTest {
         String context = tool.loadContexts(repo, List.of(".env")).get(".env");
 
         assertThat(context)
-                .contains("[context skipped]")
-                .contains("Sensitive file path is not readable")
+                .contains("[上下文已跳过]")
+                .contains("敏感文件路径不可读取")
                 .doesNotContain("SECRET=value");
     }
 

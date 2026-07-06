@@ -1,45 +1,30 @@
-# frontend
+# AgentScope Review Copilot 前端
 
-This template should help get you started developing with Vue 3 in Vite.
+这是 Review Copilot 的 Vue 3 + TypeScript + Vite 前端应用。默认界面语言为简体中文。
 
-## Recommended IDE Setup
+## 推荐开发环境
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)。
 
-## Type Support for `.vue` Imports in TS
+## 项目安装
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## 开发启动
 
-```sh
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+默认地址：`http://localhost:5173`。
 
-```sh
+## 类型检查、构建和测试
+
+```bash
+npm run type-check
+npm run test:unit -- --run
 npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
 npm run lint
 ```

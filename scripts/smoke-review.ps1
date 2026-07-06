@@ -3,6 +3,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+[Console]::OutputEncoding = $OutputEncoding
 
 $Root = Split-Path -Parent $PSScriptRoot
 $Backend = Join-Path $Root "backend"
@@ -43,6 +45,7 @@ function New-DemoRepository {
     git -C $demo init -b main | Out-Null
     git -C $demo config user.email "review@example.local" | Out-Null
     git -C $demo config user.name "Review Bot" | Out-Null
+    git -C $demo config core.autocrlf false | Out-Null
 
     New-Item -ItemType Directory -Path (Join-Path $demo "src/main/java/demo") -Force | Out-Null
     $file = Join-Path $demo "src/main/java/demo/DemoService.java"
@@ -78,6 +81,18 @@ public class DemoService {
 '@
 
     return $demo
+}
+
+function Read-Utf8Url {
+    param([string]$Url)
+
+    $client = New-Object System.Net.WebClient
+    try {
+        $bytes = $client.DownloadData($Url)
+        return [System.Text.Encoding]::UTF8.GetString($bytes)
+    } finally {
+        $client.Dispose()
+    }
 }
 
 $mvnProcess = $null
@@ -127,13 +142,11 @@ try {
         throw "Review did not complete: $($current.status) $($current.errorMessage)"
     }
 
-    $reportContent = Invoke-RestMethod `
-        -Uri ("http://localhost:$Port/api/reviews/{0}/report.md" -f $job.id) `
-        -Method Get `
-        -TimeoutSec 5
+    $reportContent = Read-Utf8Url -Url ("http://localhost:$Port/api/reviews/{0}/report.md" -f $job.id)
 
-    if (-not ([string]$reportContent).Contains("Model provider is not configured")) {
-        throw "Report does not contain the expected explicit model-provider note"
+    if (-not ([string]$reportContent).Contains("AgentScope-Java RC4") -or
+        -not ([string]$reportContent).Contains("provider")) {
+        throw "Report does not contain the expected explicit model provider note"
     }
 
     if (@($current.findings).Count -lt 2) {

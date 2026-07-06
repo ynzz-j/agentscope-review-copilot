@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { eventTypeLabel } from '@/i18n/zhCN'
 import type { ReviewEvent } from '@/types/review'
 
 defineProps<{
@@ -11,9 +12,9 @@ defineProps<{
     <li v-for="event in events" :key="`${event.timestamp}-${event.type}`">
       <span class="dot"></span>
       <div>
-        <strong>{{ event.type }}</strong>
+        <strong>{{ eventTypeLabel(event.type) }}</strong>
         <p>{{ event.message }}</p>
-        <time>{{ new Date(event.timestamp).toLocaleString() }}</time>
+        <time>{{ new Date(event.timestamp).toLocaleString('zh-CN') }}</time>
       </div>
     </li>
   </ol>

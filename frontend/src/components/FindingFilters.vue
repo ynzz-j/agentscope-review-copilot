@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { categoryLabels, severityLabels } from '@/i18n/zhCN'
 import type { ReviewCategory, ReviewSeverity } from '@/types/review'
 
 defineProps<{
@@ -21,20 +22,28 @@ const categories: Array<ReviewCategory | 'ALL'> = [
   'test-gap',
   'agent-boundary',
 ]
+
+function severityLabel(value: ReviewSeverity | 'ALL') {
+  return value === 'ALL' ? '全部级别' : severityLabels[value]
+}
+
+function categoryLabel(value: ReviewCategory | 'ALL') {
+  return value === 'ALL' ? '全部类型' : categoryLabels[value]
+}
 </script>
 
 <template>
   <div class="filters">
     <label>
-      Severity
+      严重级别
       <select :value="severity" @change="$emit('update:severity', ($event.target as HTMLSelectElement).value)">
-        <option v-for="item in severities" :key="item" :value="item">{{ item }}</option>
+        <option v-for="item in severities" :key="item" :value="item">{{ severityLabel(item) }}</option>
       </select>
     </label>
     <label>
-      Category
+      类型
       <select :value="category" @change="$emit('update:category', ($event.target as HTMLSelectElement).value)">
-        <option v-for="item in categories" :key="item" :value="item">{{ item }}</option>
+        <option v-for="item in categories" :key="item" :value="item">{{ categoryLabel(item) }}</option>
       </select>
     </label>
   </div>

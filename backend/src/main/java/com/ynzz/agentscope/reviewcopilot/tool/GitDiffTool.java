@@ -23,11 +23,11 @@ public class GitDiffTool {
         this.pathGuard = pathGuard;
     }
 
-    @Tool(name = "load_git_diff", description = "Load a read-only Git diff from a local repository.", readOnly = true)
+    @Tool(name = "load_git_diff", description = "从本地仓库只读加载 Git diff。", readOnly = true)
     public String loadGitDiff(
-            @ToolParam(name = "repoPath", description = "Local Git repository path") String repoPath,
+            @ToolParam(name = "repoPath", description = "本地 Git 仓库路径") String repoPath,
             @ToolParam(name = "diffMode", description = "WORKING_TREE, STAGED, or BASE_REF") String diffMode,
-            @ToolParam(name = "baseRef", description = "Base ref when diffMode is BASE_REF") String baseRef) {
+            @ToolParam(name = "baseRef", description = "diffMode 为 BASE_REF 时使用的基准 ref") String baseRef) {
         return loadDiff(repoPath, DiffMode.from(diffMode), baseRef).diffText();
     }
 
@@ -60,7 +60,7 @@ public class GitDiffTool {
                     (int) deleted);
         } catch (Exception e) {
             throw new IllegalStateException(
-                    "Failed to load Git diff from " + repoRoot + ": " + e.getMessage(), e);
+                    "读取 Git diff 失败：" + repoRoot + "：" + e.getMessage(), e);
         }
     }
 
@@ -76,7 +76,7 @@ public class GitDiffTool {
         if (diffMode == DiffMode.BASE_REF) {
             String ref = baseRef == null || baseRef.isBlank() ? "HEAD" : baseRef.trim();
             if (ref.startsWith("-")) {
-                throw new IllegalArgumentException("baseRef must not start with '-': " + ref);
+                throw new IllegalArgumentException("baseRef 不能以 '-' 开头：" + ref);
             }
             args.add(ref);
         }
@@ -96,10 +96,10 @@ public class GitDiffTool {
         String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         if (!completed) {
             process.destroyForcibly();
-            throw new IllegalStateException("git command timed out");
+            throw new IllegalStateException("git 命令执行超时");
         }
         if (process.exitValue() != 0) {
-            throw new IllegalStateException("git command failed: " + output.strip());
+            throw new IllegalStateException("git 命令执行失败：" + output.strip());
         }
         return output;
     }

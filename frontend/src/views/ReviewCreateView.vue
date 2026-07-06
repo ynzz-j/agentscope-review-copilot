@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { categoryLabels, diffModeLabels } from '@/i18n/zhCN'
 import { reviewCategories, useReviewStore } from '@/stores/reviewStore'
 import type { DiffMode, ReviewCategory } from '@/types/review'
 
@@ -39,40 +40,40 @@ async function submit() {
   <section class="page-grid">
     <div>
       <p class="eyebrow">AgentScope-Java 2.0.0-RC4</p>
-      <h1>Start a local Git diff review</h1>
+      <h1>发起本地 Git diff 评审</h1>
       <p class="lead">
-        Create a review job from a local repository path. The assistant reads the diff, checks file context, streams review events, and writes a Markdown report.
+        输入本地仓库路径后，系统会读取 diff、补充源码上下文、通过 SSE 推送评审进度，并生成可复制的 Markdown 报告。
       </p>
     </div>
 
     <form class="panel" @submit.prevent="submit">
       <label>
-        Repository path
+        仓库路径
         <input v-model="form.repoPath" required placeholder="D:\workspace\demo-project" />
       </label>
 
       <div class="row">
         <label>
-          Diff mode
+          Diff 范围
           <select v-model="form.diffMode">
-            <option value="WORKING_TREE">Working tree</option>
-            <option value="STAGED">Staged</option>
-            <option value="BASE_REF">Base ref</option>
+            <option value="WORKING_TREE">{{ diffModeLabels.WORKING_TREE }}</option>
+            <option value="STAGED">{{ diffModeLabels.STAGED }}</option>
+            <option value="BASE_REF">{{ diffModeLabels.BASE_REF }}</option>
           </select>
         </label>
         <label>
-          Base ref
+          基准分支
           <input v-model="form.baseRef" :disabled="form.diffMode !== 'BASE_REF'" placeholder="main" />
         </label>
       </div>
 
       <label>
-        Session ID
+        会话 ID
         <input v-model="form.sessionId" placeholder="demo-session" />
       </label>
 
       <fieldset>
-        <legend>Focus categories</legend>
+        <legend>评审重点</legend>
         <button
           v-for="category in reviewCategories"
           :key="category"
@@ -81,13 +82,13 @@ async function submit() {
           :class="{ active: form.focusCategories.includes(category) }"
           @click="toggleCategory(category)"
         >
-          {{ category }}
+          {{ categoryLabels[category] }}
         </button>
       </fieldset>
 
       <p v-if="store.error" class="error">{{ store.error }}</p>
       <button class="primary" type="submit" :disabled="store.loading">
-        {{ store.loading ? 'Creating...' : 'Create review job' }}
+        {{ store.loading ? '创建中...' : '创建评审任务' }}
       </button>
     </form>
   </section>

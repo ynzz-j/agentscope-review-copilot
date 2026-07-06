@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <pre class="report-preview">{{ markdown || 'Report is not ready yet.' }}</pre>
+  <pre class="report-preview">{{ markdown || '报告尚未生成。' }}</pre>
 </template>
 
 <style scoped>

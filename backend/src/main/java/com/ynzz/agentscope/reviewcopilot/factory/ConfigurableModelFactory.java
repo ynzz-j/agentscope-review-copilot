@@ -19,9 +19,9 @@ public class ConfigurableModelFactory implements ModelFactory {
             throw new ModelConfigurationException(MISSING_PROVIDER_MESSAGE);
         }
         throw new ModelConfigurationException(
-                "Model provider '"
+                "模型提供商 '"
                         + provider
-                        + "' is configured, but this sample does not bind a default provider adapter. Add the matching AgentScope-Java RC4 model extension before enabling model review.");
+                        + "' 已配置，但本示例不会绑定默认 provider adapter。启用模型评审前，请先加入匹配的 AgentScope-Java RC4 模型扩展。");
     }
 
     @Override

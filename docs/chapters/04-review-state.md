@@ -1,20 +1,20 @@
-# Chapter 04 - Review State
+# 第 04 章 - 评审状态
 
-## Goal
+## 目标
 
-Persist review tasks, session metadata, findings, and Markdown reports so the UI can recover state after refresh.
+持久化评审任务、会话元数据、发现项和 Markdown 报告，使 UI 刷新后仍能恢复状态。
 
-## Backend Scope
+## 后端范围
 
-- `ReviewJob` represents task lifecycle state.
-- `JsonFileReviewJobStore` saves job JSON under `backend/data/jobs`.
-- `ReviewReportService` writes Markdown reports under `backend/data/reports`.
-- `GET /api/reviews/{id}` reloads persisted job state.
-- `GET /api/reviews/{id}/report.md` returns the generated Markdown report.
+- `ReviewJob` 表示任务生命周期状态。
+- `JsonFileReviewJobStore` 将任务 JSON 保存到 `backend/data/jobs`。
+- `ReviewReportService` 将 Markdown 报告写入 `backend/data/reports`。
+- `GET /api/reviews/{id}` 重新加载持久化任务状态。
+- `GET /api/reviews/{id}/report.md` 返回已生成的 Markdown 报告。
 
-## State Contract
+## 状态契约
 
-The job record keeps:
+任务记录保留：
 
 - id
 - sessionId
@@ -30,13 +30,13 @@ The job record keeps:
 - reportPath
 - errorMessage
 
-## Frontend Scope
+## 前端范围
 
-`reviewStore` keeps active task state, progress events, findings, and report Markdown. Result pages can refetch the job and report by `id`, so a completed review remains viewable after navigation.
+`reviewStore` 保存当前任务、进度事件、发现项和报告 Markdown。结果页可按 `id` 重新加载任务和报告，因此已完成评审在页面跳转或刷新后仍可查看。
 
-## Acceptance
+## 验收
 
-- A completed review job can be saved and loaded from JSON.
-- Markdown reports are written with UTF-8 encoding.
-- Report output stays in Review Copilot's own report directory.
-- The UI can fetch a completed job and copy the Markdown report without rerunning the review.
+- 已完成任务可保存为 JSON 并再次读取。
+- Markdown 报告以 UTF-8 写入。
+- 报告输出留在 Review Copilot 自身报告目录。
+- UI 能加载已完成任务并复制 Markdown 报告，不需要重新执行评审。

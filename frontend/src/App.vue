@@ -8,10 +8,10 @@ import { RouterLink, RouterView } from 'vue-router'
       <div>
         <p class="product-kicker">AgentScope-Java 2.0.0-RC4</p>
         <h1>Review Copilot</h1>
-        <p>Local Git diff review assistant for Java engineering quality.</p>
+        <p>面向 Java 工程质量的本地 Git diff 代码评审助手。</p>
       </div>
       <nav>
-        <RouterLink to="/reviews/new">New review</RouterLink>
+        <RouterLink to="/reviews/new">新建评审</RouterLink>
       </nav>
     </aside>
 

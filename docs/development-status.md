@@ -1,69 +1,71 @@
-# Development Status
+# 开发状态
 
-This repository is generated from the Obsidian plan:
+本仓库根据 Obsidian 计划生成：
 
 `D:\Obsidian\KnowledgeBase\00-Inbox\AgentScope-Java 2.0.0-RC4 Review Copilot 自动开发计划.md`
 
-## Current State
+## 当前状态
 
-- Local path: `D:\workspace\whd\ynzz\articles\agentscope-review-copilot`
-- Git branch: `main`
-- Base tag: `base-framework`
-- Backend package root: `com.ynzz.agentscope.reviewcopilot`
-- Maven groupId: `com.ynzz`
-- AgentScope-Java version: `2.0.0-RC4`
-- Frontend stack: Vue 3 + TypeScript + Vite + Router + Pinia
+- 本地路径：`D:\workspace\whd\ynzz\articles\agentscope-review-copilot`
+- Git 分支：`main`
+- GitHub 仓库：`https://github.com/ynzz-j/agentscope-review-copilot`
+- 基础框架 tag：`base-framework`
+- 后端包根：`com.ynzz.agentscope.reviewcopilot`
+- Maven `groupId`：`com.ynzz`
+- AgentScope-Java 版本：`2.0.0-RC4`
+- 前端技术栈：Vue 3 + TypeScript + Vite + Router + Pinia
+- 默认界面语言：简体中文
 
-## Implemented
+## 已实现
 
-- Spring Boot WebFlux backend.
-- Vue 3 frontend.
-- `/health`.
-- `POST /api/reviews`.
-- `GET /api/reviews/{id}`.
-- `GET /api/reviews/{id}/events`.
-- `GET /api/reviews/{id}/report.md`.
-- Local Git diff loading through a fixed-argument `git diff` command.
-- File context loading with repository-root checks.
-- Rule-based findings for test gaps, swallowed exceptions, static mutable state, API validation gaps, and Agent tool boundaries.
-- JSON job persistence under `backend/data/jobs`.
-- Markdown reports under `backend/data/reports`.
-- Explicit no-default-model behavior in `ModelFactory`.
-- AgentScope toolkit registration and middleware extension point.
-- Auditable model-call middleware with a pluggable audit sink.
-- Frontend review create/progress/result pages.
-- Verification and smoke-test scripts under `scripts/`.
+- Spring Boot WebFlux 后端。
+- Vue 3 前端。
+- `/health`。
+- `POST /api/reviews`。
+- `GET /api/reviews/{id}`。
+- `GET /api/reviews/{id}/events`。
+- `GET /api/reviews/{id}/report.md`。
+- 使用固定参数 `git diff` 命令读取本地 Git diff。
+- 基于仓库根目录检查的文件上下文读取。
+- 针对测试缺口、异常吞掉、静态可变状态、API 校验缺失、Agent 工具边界的规则发现项。
+- `backend/data/jobs` 下的 JSON 任务持久化。
+- `backend/data/reports` 下的 Markdown 报告。
+- `ModelFactory` 中明确的无默认模型行为。
+- AgentScope toolkit 注册和 middleware 扩展点。
+- 可审计的模型调用 middleware 和可替换 audit sink。
+- 中文默认的前端创建、进度、结果页面。
+- 中文默认的 Markdown 评审报告。
+- `scripts/` 下的验证和 smoke test 脚本。
 
-## Verification Commands
+## 验证命令
 
-Run the full local gate:
+运行完整本地验证：
 
 ```powershell
 .\scripts\verify.ps1 -SkipFrontendInstall
 ```
 
-Run the end-to-end smoke review:
+运行端到端 smoke review：
 
 ```powershell
 .\scripts\smoke-review.ps1
 ```
 
-## Known Gaps
+## 已知边界
 
-- GitHub remote is not configured yet.
-- GitHub CLI (`gh`) is not installed in the current environment.
-- GitHub remote still needs to be configured before pushing branches and tags.
-- Model-backed review is intentionally not enabled until a provider is explicitly chosen.
+- 模型评审仍需在实际项目阶段显式选择 provider 后再接入。
+- 当前确定性规则检查可在未配置模型 provider 时运行。
+- 项目不会修改被评审源码。
 
-## Chapter Branch Targets
+## 章节分支
 
-| Chapter | Branch | Completion tag |
+| 章节 | 分支 | 完成 tag |
 |---|---|---|
-| Base framework | `main` | `base-framework` |
-| Chapter 01 | `chapter/01-skeleton` | `chapter-01-complete` |
-| Chapter 02 | `chapter/02-streaming-review` | `chapter-02-complete` |
-| Chapter 03 | `chapter/03-review-tools` | `chapter-03-complete` |
-| Chapter 04 | `chapter/04-review-state` | `chapter-04-complete` |
-| Chapter 05 | `chapter/05-permission-boundary` | `chapter-05-complete` |
-| Chapter 06 | `chapter/06-audit-middleware` | `chapter-06-complete` |
-| Chapter 07 | `chapter/07-ui-and-release` | `chapter-07-complete` |
+| 基础框架 | `main` | `base-framework` |
+| 第 01 章 | `chapter/01-skeleton` | `chapter-01-complete` |
+| 第 02 章 | `chapter/02-streaming-review` | `chapter-02-complete` |
+| 第 03 章 | `chapter/03-review-tools` | `chapter-03-complete` |
+| 第 04 章 | `chapter/04-review-state` | `chapter-04-complete` |
+| 第 05 章 | `chapter/05-permission-boundary` | `chapter-05-complete` |
+| 第 06 章 | `chapter/06-audit-middleware` | `chapter-06-complete` |
+| 第 07 章 | `chapter/07-ui-and-release` | `chapter-07-complete` |

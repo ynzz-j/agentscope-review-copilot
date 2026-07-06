@@ -22,37 +22,37 @@ public class ReviewPathGuard {
                     .findGitDir(requested.toFile())
                     .readEnvironment();
             if (builder.getGitDir() == null) {
-                throw new IllegalArgumentException("repoPath is not inside a Git working tree: " + repoPath);
+                throw new IllegalArgumentException("repoPath 不在 Git 工作区内：" + repoPath);
             }
             Path gitDir = builder.getGitDir().toPath().toRealPath();
             Path workTree = gitDir.getFileName().toString().equals(".git")
                     ? gitDir.getParent()
                     : gitDir;
             if (workTree == null || !Files.exists(workTree)) {
-                throw new IllegalArgumentException("Cannot resolve Git work tree for: " + repoPath);
+                throw new IllegalArgumentException("无法解析 Git 工作区：" + repoPath);
             }
             return workTree.toRealPath();
         } catch (IOException e) {
-            throw new IllegalArgumentException("repoPath does not exist or cannot be read: " + repoPath, e);
+            throw new IllegalArgumentException("repoPath 不存在或不可读：" + repoPath, e);
         }
     }
 
     public Path resolveReadableFile(Path repoRoot, String relativePath) {
         try {
             if (relativePath == null || relativePath.isBlank() || relativePath.contains("..")) {
-                throw new IllegalArgumentException("Invalid relative path: " + relativePath);
+                throw new IllegalArgumentException("无效相对路径：" + relativePath);
             }
             if (isSensitive(relativePath)) {
-                throw new IllegalArgumentException("Sensitive file path is not readable: " + relativePath);
+                throw new IllegalArgumentException("敏感文件路径不可读取：" + relativePath);
             }
             Path root = repoRoot.toRealPath();
             Path target = root.resolve(relativePath).normalize();
             if (!target.startsWith(root)) {
-                throw new IllegalArgumentException("Path escapes repository root: " + relativePath);
+                throw new IllegalArgumentException("路径越过仓库根目录：" + relativePath);
             }
             return target;
         } catch (IOException e) {
-            throw new IllegalArgumentException("Cannot resolve file path: " + relativePath, e);
+            throw new IllegalArgumentException("无法解析文件路径：" + relativePath, e);
         }
     }
 
@@ -63,11 +63,11 @@ public class ReviewPathGuard {
             Files.createDirectories(reportDir);
             Path target = reportDir.resolve(safeJobId + ".md").normalize();
             if (!target.startsWith(reportDir)) {
-                throw new IllegalArgumentException("Report path escapes report directory: " + jobId);
+                throw new IllegalArgumentException("报告路径越过报告目录：" + jobId);
             }
             return target;
         } catch (IOException e) {
-            throw new IllegalStateException("Cannot create report directory", e);
+            throw new IllegalStateException("无法创建报告目录", e);
         }
     }
 

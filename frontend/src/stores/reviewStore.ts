@@ -66,7 +66,7 @@ export const useReviewStore = defineStore('review', () => {
         }
       },
       onError() {
-        error.value = 'SSE connection interrupted. Reload the job to refresh its state.'
+        error.value = 'SSE 连接已中断。请重新加载任务以刷新状态。'
       },
     })
   }

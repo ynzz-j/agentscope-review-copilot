@@ -38,13 +38,13 @@ class ReviewReportServiceTest {
                 .running()
                 .completed(List.of(finding()), null);
 
-        ReviewReport report = service.generateAndSave(job, "Model provider is not configured.");
+        ReviewReport report = service.generateAndSave(job, "未配置模型提供商。");
         String markdown = service.readMarkdown(job.id());
 
         assertThat(report.markdown()).isEqualTo(markdown);
         assertThat(markdown)
-                .contains("# AgentScope Review Report")
-                .contains("Model provider is not configured.")
+                .contains("# AgentScope 代码评审报告")
+                .contains("未配置模型提供商。")
                 .contains("test-gap");
         assertThat(Files.exists(tempDir.resolve("reports").resolve(job.id() + ".md"))).isTrue();
     }
@@ -55,9 +55,9 @@ class ReviewReportServiceTest {
                 ReviewCategory.TEST_GAP,
                 "src/main/java/demo/DemoService.java",
                 null,
-                "Production code changed without a test.",
-                "Regression risk is higher.",
-                "Add a focused test.",
+                "生产代码变更没有对应测试。",
+                "回归风险更高。",
+                "补充聚焦测试。",
                 ReviewConfidence.MEDIUM);
     }
 }

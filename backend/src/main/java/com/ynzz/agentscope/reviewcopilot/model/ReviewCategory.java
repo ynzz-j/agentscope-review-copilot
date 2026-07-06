@@ -26,13 +26,13 @@ public enum ReviewCategory {
     @JsonCreator
     public static ReviewCategory from(String value) {
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("Review category must not be blank");
+            throw new IllegalArgumentException("评审类型不能为空");
         }
         String normalized = value.trim().toLowerCase();
         return Arrays.stream(values())
                 .filter(category -> category.code.equals(normalized)
                         || category.name().equalsIgnoreCase(normalized.replace('-', '_')))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown review category: " + value));
+                .orElseThrow(() -> new IllegalArgumentException("未知评审类型：" + value));
     }
 }

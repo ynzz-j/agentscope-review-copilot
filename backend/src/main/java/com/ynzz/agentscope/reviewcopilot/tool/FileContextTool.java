@@ -24,10 +24,10 @@ public class FileContextTool {
         this.properties = properties;
     }
 
-    @Tool(name = "read_file_context", description = "Read a bounded text context from a changed file.", readOnly = true)
+    @Tool(name = "read_file_context", description = "读取变更文件的受限文本上下文。", readOnly = true)
     public String readFileContext(
-            @ToolParam(name = "repoPath", description = "Repository root") String repoPath,
-            @ToolParam(name = "relativePath", description = "File path relative to repository root") String relativePath) {
+            @ToolParam(name = "repoPath", description = "仓库根目录") String repoPath,
+            @ToolParam(name = "relativePath", description = "相对于仓库根目录的文件路径") String relativePath) {
         Path repoRoot = Path.of(repoPath);
         Path file = permissionPolicy.requireReadableFile(repoRoot, relativePath);
         return readText(file);
@@ -42,7 +42,7 @@ public class FileContextTool {
                     contexts.put(changedFile, readText(file));
                 }
             } catch (RuntimeException ignored) {
-                contexts.put(changedFile, "[context skipped] " + ignored.getMessage());
+                contexts.put(changedFile, "[上下文已跳过] " + ignored.getMessage());
             }
         }
         return contexts;
@@ -57,11 +57,11 @@ public class FileContextTool {
             }
             return String.join(System.lineSeparator(), lines.subList(0, maxLines))
                     + System.lineSeparator()
-                    + "[truncated after "
+                    + "[已在 "
                     + maxLines
-                    + " lines]";
+                    + " 行后截断]";
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read file context: " + file, e);
+            throw new IllegalStateException("读取文件上下文失败：" + file, e);
         }
     }
 }

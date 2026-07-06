@@ -32,11 +32,11 @@ class ReviewPathGuardTest {
         assertThat(guard.resolveReportPath("review-001").startsWith(tempDir.resolve("reports"))).isTrue();
         assertThatThrownBy(() -> guard.resolveReadableFile(repo, ".env"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Sensitive");
+                .hasMessageContaining("敏感文件路径不可读取");
         assertThatThrownBy(() -> guard.resolveReadableFile(repo, "../outside.txt"))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> guard.resolveReportPath("../outside"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("jobId must contain only");
+                .hasMessageContaining("jobId 只能包含");
     }
 }

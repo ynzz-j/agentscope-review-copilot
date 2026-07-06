@@ -1,24 +1,24 @@
-# Chapter 06 - Audit Middleware
+# 第 06 章 - 审计 Middleware
 
-## Goal
+## 目标
 
-Add an AgentScope middleware layer that can audit model calls, tool availability, elapsed time, and errors without coupling review logic to a concrete model provider.
+增加 AgentScope middleware 层，用于审计模型调用、工具数量、耗时和错误，同时不把评审逻辑绑定到具体模型 provider。
 
-## Backend Scope
+## 后端范围
 
-- `AuditingMiddleware` implements AgentScope-Java `MiddlewareBase`.
-- `AuditRecord` captures model-call status, agent name, message count, tool count, elapsed time, error text, and timestamp.
-- `ReviewAuditSink` isolates where audit records are written.
-- `LoggingReviewAuditSink` is the default sink for the intro project.
-- `AgentFactory` wires AgentScope toolkit and middlewares, but still requires explicit model configuration.
+- `AuditingMiddleware` 实现 AgentScope-Java `MiddlewareBase`。
+- `AuditRecord` 记录模型调用状态、Agent 名称、消息数、工具数、耗时、错误文本和时间戳。
+- `ReviewAuditSink` 隔离审计记录的写入目标。
+- `LoggingReviewAuditSink` 是入门项目默认 sink。
+- `AgentFactory` 装配 AgentScope toolkit 和 middleware，但模型 provider 仍必须显式配置。
 
-## Model Boundary
+## 模型边界
 
-The project still does not choose a default provider. `ModelFactory` returns a clear configuration error until the actual implementation chapter selects DashScope, OpenAI, Anthropic, Gemini, Ollama, or another RC4-supported path.
+项目仍不选择默认 provider。`ModelFactory` 会在实际选择 DashScope、OpenAI、Anthropic、Gemini、Ollama 或其他 RC4 支持方式前返回清晰配置错误。
 
-## Acceptance
+## 验收
 
-- Successful model-call middleware execution creates a success audit record.
-- Failed model-call middleware execution creates a failed audit record with error text.
-- Missing model provider remains an explicit configuration state, not a hidden default.
-- Review tooling remains usable through deterministic checks when model-backed review is not configured.
+- 成功模型调用会产生成功审计记录。
+- 失败模型调用会产生失败审计记录，并包含错误文本。
+- 缺少模型 provider 是显式配置状态，不会隐式选择默认值。
+- 未配置模型时，确定性规则检查仍可运行。

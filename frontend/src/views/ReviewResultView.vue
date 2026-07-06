@@ -40,7 +40,7 @@ async function copy() {
   <section class="result-layout">
     <header>
       <div>
-        <p class="eyebrow">Review result</p>
+        <p class="eyebrow">评审结果</p>
         <h1>{{ id }}</h1>
       </div>
       <ReviewStatusBadge v-if="store.currentJob" :status="store.currentJob.status" />
@@ -50,20 +50,20 @@ async function copy() {
 
     <section class="panel">
       <div class="panel-heading">
-        <h2>Findings</h2>
+        <h2>发现项</h2>
         <FindingFilters v-model:severity="severity" v-model:category="category" />
       </div>
       <div class="finding-list">
         <FindingCard v-for="finding in filteredFindings" :key="`${finding.file}-${finding.category}-${finding.line}`" :finding="finding" />
-        <p v-if="filteredFindings.length === 0" class="muted">No findings match the current filters.</p>
+        <p v-if="filteredFindings.length === 0" class="muted">当前筛选条件下没有发现项。</p>
       </div>
     </section>
 
     <section class="panel">
       <div class="panel-heading">
-        <h2>Markdown report</h2>
+        <h2>Markdown 报告</h2>
         <button class="secondary" :disabled="!store.reportMarkdown" @click="copy">
-          {{ copied ? 'Copied' : 'Copy report' }}
+          {{ copied ? '已复制' : '复制报告' }}
         </button>
       </div>
       <ReportPreview :markdown="store.reportMarkdown" />

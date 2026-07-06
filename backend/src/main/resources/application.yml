@@ -18,5 +18,9 @@ review-copilot:
   agent:
     name: AgentScope Review Copilot
     max-iters: 8
+    sys-prompt: |
+      你是 AgentScope Review Copilot。
+      只评审传入的 Git diff 和源码上下文。
+      输出有证据支撑的发现项，避免泛泛而谈的重构建议，并且不要修改源码文件。
   review:
     max-context-lines-per-file: 220

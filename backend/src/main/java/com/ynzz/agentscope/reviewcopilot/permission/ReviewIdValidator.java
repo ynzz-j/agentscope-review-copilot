@@ -10,7 +10,7 @@ public final class ReviewIdValidator {
 
     public static String requireSafe(String value, String label) {
         if (value == null || value.isBlank() || !SAFE_ID.matcher(value).matches()) {
-            throw new IllegalArgumentException(label + " must contain only letters, digits, dot, underscore, or dash");
+            throw new IllegalArgumentException(label + " 只能包含字母、数字、点、下划线或短横线");
         }
         return value;
     }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { categoryLabels, confidenceLabels, severityLabels } from '@/i18n/zhCN'
 import type { ReviewFinding } from '@/types/review'
 
 defineProps<{
@@ -9,14 +10,14 @@ defineProps<{
 <template>
   <article class="finding-card" :class="finding.severity.toLowerCase()">
     <header>
-      <span class="severity">{{ finding.severity }}</span>
-      <span class="category">{{ finding.category }}</span>
+      <span class="severity">{{ severityLabels[finding.severity] }}</span>
+      <span class="category">{{ categoryLabels[finding.category] }}</span>
       <code>{{ finding.file }}<template v-if="finding.line">:{{ finding.line }}</template></code>
     </header>
-    <p><strong>Evidence</strong>{{ finding.evidence }}</p>
-    <p><strong>Impact</strong>{{ finding.impact }}</p>
-    <p><strong>Suggestion</strong>{{ finding.suggestion }}</p>
-    <footer>Confidence: {{ finding.confidence }}</footer>
+    <p><strong>证据</strong>{{ finding.evidence }}</p>
+    <p><strong>影响</strong>{{ finding.impact }}</p>
+    <p><strong>建议</strong>{{ finding.suggestion }}</p>
+    <footer>置信度：{{ confidenceLabels[finding.confidence] }}</footer>
   </article>
 </template>
 

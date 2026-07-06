@@ -28,21 +28,21 @@ public class ReviewReportService {
         try {
             Files.writeString(target, markdown, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to write review report: " + target, e);
+            throw new IllegalStateException("写入评审报告失败：" + target, e);
         }
-        String summary = "Found " + job.findings().size() + " engineering-quality finding(s).";
+        String summary = "共发现 " + job.findings().size() + " 条工程质量发现项。";
         return new ReviewReport(job.id(), summary, job.findings(), markdown, Instant.now());
     }
 
     public String readMarkdown(String jobId) {
         Path target = permissionPolicy.requireReportOutput(jobId);
         if (!Files.exists(target)) {
-            throw new ReportNotFoundException("Review report does not exist: " + jobId);
+            throw new ReportNotFoundException("评审报告不存在：" + jobId);
         }
         try {
             return Files.readString(target, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read review report: " + target, e);
+            throw new IllegalStateException("读取评审报告失败：" + target, e);
         }
     }
 

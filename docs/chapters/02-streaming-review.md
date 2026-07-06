@@ -1,20 +1,20 @@
-# Chapter 02 - Streaming Review
+# 第 02 章 - 流式评审进度
 
-## Goal
+## 目标
 
-Build the review task API and stream progress to the Vue progress page through Server-Sent Events.
+实现评审任务 API，并通过 Server-Sent Events 将评审进度推送到 Vue 进度页。
 
-## Backend Scope
+## 后端范围
 
-- `POST /api/reviews` creates a review job and starts the review pipeline asynchronously.
-- `GET /api/reviews/{id}` returns persisted job state.
-- `GET /api/reviews/{id}/events` returns `text/event-stream` events with the `ReviewEvent` DTO.
-- `ReviewEventPublisher` keeps per-job event history so late subscribers can still render the full timeline.
-- Terminal events (`JOB_COMPLETED`, `JOB_FAILED`) close the stream and are replayed as finite history for future subscribers.
+- `POST /api/reviews` 创建评审任务，并异步启动评审流水线。
+- `GET /api/reviews/{id}` 返回持久化任务状态。
+- `GET /api/reviews/{id}/events` 返回 `text/event-stream` 事件流。
+- `ReviewEventPublisher` 保存每个任务的事件历史，迟到订阅者也能看到完整时间线。
+- `JOB_COMPLETED` 和 `JOB_FAILED` 会关闭事件流，并在后续订阅时以有限历史回放。
 
-## Event Contract
+## 事件契约
 
-The progress page should treat the event type as the source of truth:
+进度页以事件类型作为状态来源：
 
 - `JOB_CREATED`
 - `DIFF_LOADED`
@@ -26,17 +26,17 @@ The progress page should treat the event type as the source of truth:
 - `JOB_COMPLETED`
 - `JOB_FAILED`
 
-Each event contains `jobId`, `type`, `message`, `payload`, and `timestamp`.
+每个事件包含 `jobId`、`type`、`message`、`payload` 和 `timestamp`。
 
-## Frontend Scope
+## 前端范围
 
-- `ReviewCreateView` posts `ReviewRequest`.
-- `ReviewProgressView` subscribes to `/api/reviews/{id}/events`.
-- `reviewStore` owns the EventSource lifecycle, appends events, fetches the final job, and navigates to the result view after completion.
+- `ReviewCreateView` 提交 `ReviewRequest`。
+- `ReviewProgressView` 订阅 `/api/reviews/{id}/events`。
+- `reviewStore` 管理 EventSource 生命周期、事件追加、最终任务加载和结果页跳转。
 
-## Acceptance
+## 验收
 
-- A user can create a review from the UI and immediately see staged progress.
-- Refreshing or opening the progress URL after a job has completed still shows the completed timeline.
-- The stream does not require a model provider; missing model configuration is emitted as an explicit progress message and noted in the final report.
-- Unit tests cover historical replay and live event emission in `ReviewEventPublisherTest`.
+- 用户创建评审后能立即看到阶段进度。
+- 刷新或重新打开已完成任务的进度页，仍能看到完整时间线。
+- 未配置模型 provider 时，事件流会明确提示并在最终报告中保留说明。
+- `ReviewEventPublisherTest` 覆盖历史回放和实时事件发送。

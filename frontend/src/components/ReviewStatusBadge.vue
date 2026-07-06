@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { statusLabels } from '@/i18n/zhCN'
 import type { ReviewStatus } from '@/types/review'
 
 defineProps<{
@@ -7,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <span class="status-badge" :class="status.toLowerCase()">{{ status }}</span>
+  <span class="status-badge" :class="status.toLowerCase()">{{ statusLabels[status] }}</span>
 </template>
 
 <style scoped>

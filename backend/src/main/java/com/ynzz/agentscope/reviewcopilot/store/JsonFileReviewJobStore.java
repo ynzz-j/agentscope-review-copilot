@@ -32,7 +32,7 @@ public class JsonFileReviewJobStore implements ReviewJobStore {
             Files.move(temp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return job;
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to save review job: " + job.id(), e);
+            throw new IllegalStateException("保存评审任务失败：" + job.id(), e);
         }
     }
 
@@ -45,7 +45,7 @@ public class JsonFileReviewJobStore implements ReviewJobStore {
         try {
             return Optional.of(objectMapper.readValue(Files.readString(file, StandardCharsets.UTF_8), ReviewJob.class));
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to read review job: " + id, e);
+            throw new IllegalStateException("读取评审任务失败：" + id, e);
         }
     }
 
@@ -54,7 +54,7 @@ public class JsonFileReviewJobStore implements ReviewJobStore {
         Path base = root.toAbsolutePath().normalize();
         Path target = base.resolve(safeId + ".json").normalize();
         if (!target.startsWith(base)) {
-            throw new IllegalArgumentException("Review job path escapes job directory: " + id);
+            throw new IllegalArgumentException("评审任务路径越过任务目录：" + id);
         }
         return target;
     }

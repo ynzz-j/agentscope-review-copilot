@@ -49,7 +49,7 @@ class JsonFileReviewJobStoreTest {
 
         assertThatThrownBy(() -> store.findById("../outside"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("review id must contain only");
+                .hasMessageContaining("review id 只能包含");
     }
 
     private ReviewFinding finding() {
@@ -58,9 +58,9 @@ class JsonFileReviewJobStoreTest {
                 ReviewCategory.TEST_GAP,
                 "src/main/java/demo/DemoService.java",
                 null,
-                "Production code changed without a test.",
-                "Regression risk is higher.",
-                "Add a focused test.",
+                "生产代码变更没有对应测试。",
+                "回归风险更高。",
+                "补充聚焦测试。",
                 ReviewConfidence.MEDIUM);
     }
 }

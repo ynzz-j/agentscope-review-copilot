@@ -60,7 +60,7 @@ public class ReviewService {
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.JOB_CREATED,
-                    "Review job created.",
+                    "评审任务已创建。",
                     Map.of("repoPath", job.repoPath(), "diffMode", job.diffMode())));
             Mono.fromRunnable(() -> runReview(job.id()))
                     .subscribeOn(Schedulers.boundedElastic())
@@ -71,7 +71,7 @@ public class ReviewService {
 
     public Mono<ReviewJob> getReview(String id) {
         return Mono.fromCallable(() -> jobStore.findById(id)
-                .orElseThrow(() -> new ReviewNotFoundException("Review job not found: " + id)));
+                .orElseThrow(() -> new ReviewNotFoundException("未找到评审任务：" + id)));
     }
 
     public Flux<ReviewEvent> streamEvents(String id) {
@@ -84,16 +84,16 @@ public class ReviewService {
 
     private void runReview(String jobId) {
         ReviewJob job = jobStore.findById(jobId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review job not found: " + jobId));
+                .orElseThrow(() -> new ReviewNotFoundException("未找到评审任务：" + jobId));
         try {
             job = jobStore.save(job.running());
-            eventPublisher.publish(job.id(), ReviewEventType.MODEL_REVIEWING, "Review pipeline started.");
+            eventPublisher.publish(job.id(), ReviewEventType.MODEL_REVIEWING, "评审流水线已启动。");
 
             GitDiffTool.GitDiffResult diff = gitDiffTool.loadDiff(job.repoPath(), job.diffMode(), job.baseRef());
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.DIFF_LOADED,
-                    "Git diff loaded.",
+                    "Git diff 已读取。",
                     Map.of(
                             "changedFiles", diff.changedFiles(),
                             "addedFiles", diff.addedFiles(),
@@ -104,7 +104,7 @@ public class ReviewService {
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.FILE_CONTEXT_LOADED,
-                    "File context loaded.",
+                    "源码上下文已读取。",
                     Map.of("fileCount", contexts.size())));
 
             List<ReviewFinding> findings =
@@ -112,23 +112,23 @@ public class ReviewService {
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.RULE_CHECK_DONE,
-                    "Rule checks completed.",
+                    "规则检查已完成。",
                     Map.of("findingCount", findings.size())));
 
             String modelNote = "";
             if (!agentFactory.isModelConfigured()) {
                 modelNote = ModelFactory.MISSING_PROVIDER_MESSAGE
-                        + " Deterministic rule checks were still executed.";
+                        + " 当前仍已执行确定性规则检查。";
                 eventPublisher.publish(ReviewEvent.of(
                         job.id(),
                         ReviewEventType.MODEL_REVIEWING,
-                        "Model provider is not configured; skipped model review and kept rule findings.",
+                        "未配置模型提供商，已跳过模型评审并保留规则检查结果。",
                         Map.of("modelConfigured", false)));
             } else {
                 eventPublisher.publish(ReviewEvent.of(
                         job.id(),
                         ReviewEventType.MODEL_REVIEWING,
-                        "Model provider is configured; AgentFactory is ready for model-backed review extension.",
+                        "模型提供商已配置，AgentFactory 可继续扩展模型评审。",
                         Map.of("modelConfigured", true)));
             }
 
@@ -136,7 +136,7 @@ public class ReviewService {
                 eventPublisher.publish(ReviewEvent.of(
                         job.id(),
                         ReviewEventType.FINDING_GENERATED,
-                        finding.severity() + " " + finding.category().getCode() + " finding generated.",
+                        "已生成 " + finding.severity() + " 级别的 " + finding.category().getCode() + " 发现项。",
                         Map.of("finding", finding)));
             }
 
@@ -146,12 +146,12 @@ public class ReviewService {
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.REPORT_READY,
-                    "Markdown report generated.",
+                    "Markdown 报告已生成。",
                     Map.of("reportLength", report.markdown().length())));
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.JOB_COMPLETED,
-                    "Review job completed.",
+                    "评审任务已完成。",
                     Map.of("status", completed.status())));
             eventPublisher.complete(job.id());
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class ReviewService {
             eventPublisher.publish(ReviewEvent.of(
                     failed.id(),
                     ReviewEventType.JOB_FAILED,
-                    "Review job failed: " + e.getMessage(),
+                    "评审任务失败：" + e.getMessage(),
                     Map.of("error", e.getMessage())));
             eventPublisher.complete(failed.id());
         }
