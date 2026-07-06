@@ -41,4 +41,35 @@ class RuleCheckToolTest {
         assertThat(findings).extracting(ReviewFinding::category)
                 .contains(ReviewCategory.TEST_GAP, ReviewCategory.BUG_RISK);
     }
+
+    @Test
+    void honorsFocusedReviewCategories() {
+        GitDiffTool.GitDiffResult diff = new GitDiffTool.GitDiffResult(
+                Path.of("."),
+                "diff --git a/src/main/java/Demo.java b/src/main/java/Demo.java\n+new code",
+                List.of("src/main/java/Demo.java"),
+                0,
+                1,
+                0);
+        Map<String, String> contexts = Map.of(
+                "src/main/java/Demo.java",
+                """
+                public class Demo {
+                  private static Map<String, String> cache;
+
+                  void run() {
+                    try {
+                      risky();
+                    } catch (Exception e) {
+                      e.printStackTrace();
+                    }
+                  }
+                }
+                """);
+
+        List<ReviewFinding> findings = tool.check(diff, contexts, List.of(ReviewCategory.CONCURRENCY));
+
+        assertThat(findings).extracting(ReviewFinding::category)
+                .containsExactly(ReviewCategory.CONCURRENCY);
+    }
 }
