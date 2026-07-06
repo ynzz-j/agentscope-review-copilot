@@ -10,6 +10,7 @@ $Root = Split-Path -Parent $PSScriptRoot
 $Backend = Join-Path $Root "backend"
 $ServerOut = Join-Path $Backend "server.out.log"
 $ServerErr = Join-Path $Backend "server.err.log"
+$PreviousSpringApplicationJson = $env:SPRING_APPLICATION_JSON
 
 function Stop-ReviewServer {
     Get-CimInstance Win32_Process |
@@ -99,6 +100,7 @@ $mvnProcess = $null
 try {
     Stop-ReviewServer
     Remove-Item -LiteralPath $ServerOut, $ServerErr -Force -ErrorAction SilentlyContinue
+    $env:SPRING_APPLICATION_JSON = '{"review-copilot":{"model":{"provider":"","model-name":"","api-key":""}}}'
 
     $mvnProcess = Start-Process `
         -FilePath "mvn.cmd" `
@@ -168,4 +170,5 @@ try {
         Stop-Process -Id $mvnProcess.Id -Force -ErrorAction SilentlyContinue
     }
     Stop-ReviewServer
+    $env:SPRING_APPLICATION_JSON = $PreviousSpringApplicationJson
 }

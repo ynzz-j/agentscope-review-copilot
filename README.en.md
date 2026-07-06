@@ -38,9 +38,29 @@ Open `http://localhost:5173`.
 
 This project intentionally does **not** select a default model provider.
 
-The model layer is represented by `ModelFactory` and `AgentFactory`. If model-backed review is enabled later, choose an AgentScope-Java RC4-supported provider explicitly, such as DashScope, OpenAI, Anthropic, Gemini, Ollama, or another supported extension.
+The model layer is represented by `ModelFactory` and `AgentFactory`. When no provider is configured, the backend does not default to DashScope or any other provider. The deterministic rule checks still run and the report includes a clear model configuration note.
 
-When no provider is configured, the backend does not default to DashScope or any other provider. The deterministic rule checks still run and the report includes a clear model configuration note.
+Once a provider is configured explicitly, the review pipeline calls the AgentScope-Java model and parses model output into structured findings. Supported providers:
+
+- `dashscope` / `dsp`
+- `openai`
+- `deepseek`
+- `anthropic`
+- `gemini`
+- `ollama`
+- `registry`
+
+Example:
+
+```yaml
+review-copilot:
+  model:
+    provider: dsp
+    model-name: qwen-plus
+    api-key: ${DASHSCOPE_API_KEY}
+```
+
+When model configuration is enabled, the Git diff and source context are sent to the selected model service.
 
 ## API
 

@@ -31,13 +31,24 @@ public class AgentFactory {
     }
 
     public ReActAgent create(String sessionId) {
+        return baseBuilder(sessionId)
+                .toolkit(toolkit)
+                .build();
+    }
+
+    public ReActAgent createModelOnlyReviewer(String sessionId) {
+        return baseBuilder(sessionId)
+                .toolkit(new Toolkit())
+                .build();
+    }
+
+    private ReActAgent.Builder baseBuilder(String sessionId) {
         return ReActAgent.builder()
                 .name(properties.getAgent().getName())
                 .sysPrompt(properties.getAgent().getSysPrompt())
                 .model(modelFactory.getModel())
-                .toolkit(toolkit)
                 .middlewares(middlewares)
                 .maxIters(properties.getAgent().getMaxIters())
-                .build();
+                .defaultSessionId(sessionId);
     }
 }

@@ -40,9 +40,29 @@ npm run dev
 
 本项目**不会指定默认模型提供商**。
 
-模型层只保留 `ModelFactory` / `AgentFactory` 抽象。后续接入模型评审时，需要显式选择 AgentScope-Java RC4 支持的 provider，例如 DashScope、OpenAI、Anthropic、Gemini、Ollama 或其他支持方式。
+模型层保留 `ModelFactory` / `AgentFactory` 抽象。未配置 provider 时，后端不会默认选择 DashScope 或其他模型，确定性规则检查仍会执行，报告中会明确说明模型 provider 尚未配置。
 
-未配置 provider 时，后端不会默认选择 DashScope 或其他模型。确定性规则检查仍会执行，报告中会明确说明模型 provider 尚未配置。
+显式配置 provider 后，评审流水线会真实调用 AgentScope-Java 模型，并把模型输出解析成结构化发现项。支持的 provider：
+
+- `dashscope` / `dsp`
+- `openai`
+- `deepseek`
+- `anthropic`
+- `gemini`
+- `ollama`
+- `registry`
+
+示例：
+
+```yaml
+review-copilot:
+  model:
+    provider: dsp
+    model-name: qwen-plus
+    api-key: ${DASHSCOPE_API_KEY}
+```
+
+配置模型后，Git diff 和源码上下文会发送到你选择的模型服务。
 
 ## API
 

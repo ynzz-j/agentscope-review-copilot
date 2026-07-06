@@ -1,7 +1,10 @@
 review-copilot:
   model:
     # 本项目不会选择默认模型 provider。
-    # 实现模型评审时，再显式选择一个 AgentScope-Java RC4 支持的 provider。
+    # 显式配置 provider 后，评审流水线会真实调用模型。
+    # 支持：dashscope/dsp, openai, deepseek, anthropic, gemini, ollama, registry。
     provider: ""
     model-name: ""
     api-key: "${MODEL_API_KEY:}"
+    base-url: ""
+    endpoint-path: ""

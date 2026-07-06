@@ -42,7 +42,7 @@ public class ReportTool {
 
         markdown.append("## 发现项").append(System.lineSeparator()).append(System.lineSeparator());
         if (job.findings().isEmpty()) {
-            markdown.append("本次 diff 未生成确定性规则发现项。")
+            markdown.append("本次 diff 未生成结构化发现项。")
                     .append(System.lineSeparator());
         }
         for (ReviewFinding finding : job.findings()) {

@@ -14,6 +14,7 @@ import com.ynzz.agentscope.reviewcopilot.tool.FileContextTool;
 import com.ynzz.agentscope.reviewcopilot.tool.GitDiffTool;
 import com.ynzz.agentscope.reviewcopilot.tool.RuleCheckTool;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ReviewService {
     private final FileContextTool fileContextTool;
     private final RuleCheckTool ruleCheckTool;
     private final AgentFactory agentFactory;
+    private final ModelReviewService modelReviewService;
 
     public ReviewService(
             ReviewPathGuard pathGuard,
@@ -41,7 +43,8 @@ public class ReviewService {
             GitDiffTool gitDiffTool,
             FileContextTool fileContextTool,
             RuleCheckTool ruleCheckTool,
-            AgentFactory agentFactory) {
+            AgentFactory agentFactory,
+            ModelReviewService modelReviewService) {
         this.pathGuard = pathGuard;
         this.jobStore = jobStore;
         this.eventPublisher = eventPublisher;
@@ -50,6 +53,7 @@ public class ReviewService {
         this.fileContextTool = fileContextTool;
         this.ruleCheckTool = ruleCheckTool;
         this.agentFactory = agentFactory;
+        this.modelReviewService = modelReviewService;
     }
 
     public Mono<ReviewJob> createReview(ReviewRequest request) {
@@ -107,14 +111,15 @@ public class ReviewService {
                     "源码上下文已读取。",
                     Map.of("fileCount", contexts.size())));
 
-            List<ReviewFinding> findings =
+            List<ReviewFinding> ruleFindings =
                     ruleCheckTool.check(diff, contexts, job.focusCategories());
             eventPublisher.publish(ReviewEvent.of(
                     job.id(),
                     ReviewEventType.RULE_CHECK_DONE,
                     "规则检查已完成。",
-                    Map.of("findingCount", findings.size())));
+                    Map.of("findingCount", ruleFindings.size())));
 
+            List<ReviewFinding> findings = new ArrayList<>(ruleFindings);
             String modelNote = "";
             if (!agentFactory.isModelConfigured()) {
                 modelNote = ModelFactory.MISSING_PROVIDER_MESSAGE
@@ -128,8 +133,18 @@ public class ReviewService {
                 eventPublisher.publish(ReviewEvent.of(
                         job.id(),
                         ReviewEventType.MODEL_REVIEWING,
-                        "模型提供商已配置，AgentFactory 可继续扩展模型评审。",
+                        "模型评审已开始。",
                         Map.of("modelConfigured", true)));
+                ModelReviewResult modelResult = modelReviewService.review(job, diff, contexts, ruleFindings);
+                findings.addAll(modelResult.findings());
+                modelNote = buildModelNote(modelResult);
+                eventPublisher.publish(ReviewEvent.of(
+                        job.id(),
+                        ReviewEventType.MODEL_REVIEWING,
+                        "模型评审已完成。",
+                        Map.of(
+                                "modelConfigured", true,
+                                "modelFindingCount", modelResult.findings().size())));
             }
 
             for (ReviewFinding finding : findings) {
@@ -169,5 +184,16 @@ public class ReviewService {
         public ReviewNotFoundException(String message) {
             super(message);
         }
+    }
+
+    private String buildModelNote(ModelReviewResult modelResult) {
+        if (modelResult.findings().isEmpty()) {
+            return "模型评审已调用，但未返回可解析的结构化发现项。";
+        }
+        String note = "模型评审已调用，生成 " + modelResult.findings().size() + " 条结构化发现项。";
+        if (modelResult.summary() != null && !modelResult.summary().isBlank()) {
+            note += " 模型摘要：" + modelResult.summary();
+        }
+        return note;
     }
 }

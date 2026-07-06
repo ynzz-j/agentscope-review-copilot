@@ -31,6 +31,7 @@
 - `backend/data/jobs` 下的 JSON 任务持久化。
 - `backend/data/reports` 下的 Markdown 报告。
 - `ModelFactory` 中明确的无默认模型行为。
+- 显式 provider 配置后的 AgentScope-Java 模型评审调用。
 - AgentScope toolkit 注册和 middleware 扩展点。
 - 可审计的模型调用 middleware 和可替换 audit sink。
 - 中文默认的前端创建、进度、结果页面。
@@ -53,8 +54,8 @@
 
 ## 已知边界
 
-- 模型评审仍需在实际项目阶段显式选择 provider 后再接入。
-- 当前确定性规则检查可在未配置模型 provider 时运行。
+- 未配置模型 provider 时，当前确定性规则检查仍可运行，不会默认选择 provider。
+- 配置模型 provider 后，Git diff 和源码上下文会发送到所选模型服务。
 - 项目不会修改被评审源码。
 
 ## 章节分支

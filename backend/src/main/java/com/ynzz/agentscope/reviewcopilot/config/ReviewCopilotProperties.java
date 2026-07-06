@@ -33,6 +33,8 @@ public class ReviewCopilotProperties {
         private String provider;
         private String modelName;
         private String apiKey;
+        private String baseUrl;
+        private String endpointPath;
 
         public String getProvider() {
             return provider;
@@ -56,6 +58,22 @@ public class ReviewCopilotProperties {
 
         public void setApiKey(String apiKey) {
             this.apiKey = apiKey;
+        }
+
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+
+        public String getEndpointPath() {
+            return endpointPath;
+        }
+
+        public void setEndpointPath(String endpointPath) {
+            this.endpointPath = endpointPath;
         }
     }
 
