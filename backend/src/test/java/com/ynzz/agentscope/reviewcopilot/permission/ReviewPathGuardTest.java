@@ -23,14 +23,20 @@ class ReviewPathGuardTest {
         Files.writeString(repo.resolve("README.md"), "demo");
         Files.writeString(repo.resolve(".env"), "secret=true");
 
-        ReviewPathGuard guard = new ReviewPathGuard(new ReviewCopilotProperties());
+        ReviewCopilotProperties properties = new ReviewCopilotProperties();
+        properties.getStorage().setReportDir(tempDir.resolve("reports"));
+        ReviewPathGuard guard = new ReviewPathGuard(properties);
 
         assertThat(guard.resolveRepositoryRoot(repo.toString())).isEqualTo(repo.toRealPath());
         assertThat(guard.resolveReadableFile(repo, "README.md")).isEqualTo(repo.resolve("README.md").normalize());
+        assertThat(guard.resolveReportPath("review-001").startsWith(tempDir.resolve("reports"))).isTrue();
         assertThatThrownBy(() -> guard.resolveReadableFile(repo, ".env"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Sensitive");
         assertThatThrownBy(() -> guard.resolveReadableFile(repo, "../outside.txt"))
                 .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> guard.resolveReportPath("../outside"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("jobId must contain only");
     }
 }

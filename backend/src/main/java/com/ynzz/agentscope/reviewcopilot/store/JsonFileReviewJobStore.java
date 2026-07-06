@@ -3,6 +3,7 @@ package com.ynzz.agentscope.reviewcopilot.store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ynzz.agentscope.reviewcopilot.model.ReviewJob;
+import com.ynzz.agentscope.reviewcopilot.permission.ReviewIdValidator;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class JsonFileReviewJobStore implements ReviewJobStore {
     @Override
     public synchronized ReviewJob save(ReviewJob job) {
         try {
-            Files.createDirectories(root);
+            Files.createDirectories(root.toAbsolutePath().normalize());
             Path target = file(job.id());
             Path temp = target.resolveSibling(target.getFileName() + ".tmp");
             String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(job);
@@ -49,6 +50,12 @@ public class JsonFileReviewJobStore implements ReviewJobStore {
     }
 
     private Path file(String id) {
-        return root.resolve(id + ".json");
+        String safeId = ReviewIdValidator.requireSafe(id, "review id");
+        Path base = root.toAbsolutePath().normalize();
+        Path target = base.resolve(safeId + ".json").normalize();
+        if (!target.startsWith(base)) {
+            throw new IllegalArgumentException("Review job path escapes job directory: " + id);
+        }
+        return target;
     }
 }
