@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: agentscope-review-copilot
+
+review-copilot:
+  model:
+    provider:
+    model-name:
+    api-key:
+  storage:
+    data-dir: ./data
+    agent-state-dir: ./data/agent-states
+    job-dir: ./data/jobs
+    report-dir: ./data/reports
+  agent:
+    name: AgentScope Review Copilot
+    max-iters: 8
+  review:
+    max-context-lines-per-file: 220

@@ -1,0 +1,7 @@
+review-copilot:
+  model:
+    # No default provider is selected by this project.
+    # Choose one AgentScope-Java RC4-supported provider when implementing model-backed review.
+    provider: ""
+    model-name: ""
+    api-key: "${MODEL_API_KEY:}"
