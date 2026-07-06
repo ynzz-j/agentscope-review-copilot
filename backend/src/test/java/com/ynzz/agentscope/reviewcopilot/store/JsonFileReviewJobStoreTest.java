@@ -1,6 +1,7 @@
 package com.ynzz.agentscope.reviewcopilot.store;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.ynzz.agentscope.reviewcopilot.model.DiffMode;
 import com.ynzz.agentscope.reviewcopilot.model.ReviewCategory;
@@ -40,6 +41,15 @@ class JsonFileReviewJobStoreTest {
                     assertThat(reloaded.reportPath()).isEqualTo("data/reports/report.md");
                 });
         assertThat(tempDir.resolve("jobs").resolve(job.id() + ".json")).exists();
+    }
+
+    @Test
+    void rejectsUnsafeReviewIds() {
+        JsonFileReviewJobStore store = new JsonFileReviewJobStore(tempDir.resolve("jobs"));
+
+        assertThatThrownBy(() -> store.findById("../outside"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("review id must contain only");
     }
 
     private ReviewFinding finding() {

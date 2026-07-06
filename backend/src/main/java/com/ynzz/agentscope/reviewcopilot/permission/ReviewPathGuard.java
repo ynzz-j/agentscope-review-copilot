@@ -58,8 +58,14 @@ public class ReviewPathGuard {
 
     public Path resolveReportPath(String jobId) {
         try {
-            Files.createDirectories(properties.getStorage().getReportDir());
-            return properties.getStorage().getReportDir().resolve(jobId + ".md").normalize();
+            String safeJobId = ReviewIdValidator.requireSafe(jobId, "jobId");
+            Path reportDir = properties.getStorage().getReportDir().toAbsolutePath().normalize();
+            Files.createDirectories(reportDir);
+            Path target = reportDir.resolve(safeJobId + ".md").normalize();
+            if (!target.startsWith(reportDir)) {
+                throw new IllegalArgumentException("Report path escapes report directory: " + jobId);
+            }
+            return target;
         } catch (IOException e) {
             throw new IllegalStateException("Cannot create report directory", e);
         }
