@@ -30,6 +30,7 @@ This repository is generated from the Obsidian plan:
 - Markdown reports under `backend/data/reports`.
 - Explicit no-default-model behavior in `ModelFactory`.
 - AgentScope toolkit registration and middleware extension point.
+- Auditable model-call middleware with a pluggable audit sink.
 - Frontend review create/progress/result pages.
 - Verification and smoke-test scripts under `scripts/`.
 
@@ -51,7 +52,7 @@ Run the end-to-end smoke review:
 
 - GitHub remote is not configured yet.
 - GitHub CLI (`gh`) is not installed in the current environment.
-- Chapter branches and completion tags are not fully expanded yet.
+- GitHub remote still needs to be configured before pushing branches and tags.
 - Model-backed review is intentionally not enabled until a provider is explicitly chosen.
 
 ## Chapter Branch Targets
