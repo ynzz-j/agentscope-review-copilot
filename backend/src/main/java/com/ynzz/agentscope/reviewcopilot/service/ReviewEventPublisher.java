@@ -2,10 +2,10 @@ package com.ynzz.agentscope.reviewcopilot.service;
 
 import com.ynzz.agentscope.reviewcopilot.model.ReviewEvent;
 import com.ynzz.agentscope.reviewcopilot.model.ReviewEventType;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
@@ -25,7 +25,7 @@ public class ReviewEventPublisher {
     }
 
     public void publish(ReviewEvent event) {
-        history.computeIfAbsent(event.jobId(), ignored -> new ArrayList<>()).add(event);
+        history.computeIfAbsent(event.jobId(), ignored -> new CopyOnWriteArrayList<>()).add(event);
         sink(event.jobId()).tryEmitNext(event);
     }
 
@@ -41,7 +41,7 @@ public class ReviewEventPublisher {
     }
 
     private Sinks.Many<ReviewEvent> sink(String jobId) {
-        return sinks.computeIfAbsent(jobId, ignored -> Sinks.many().multicast().onBackpressureBuffer());
+        return sinks.computeIfAbsent(jobId, ignored -> Sinks.many().multicast().directBestEffort());
     }
 
     private boolean isTerminal(List<ReviewEvent> events) {
