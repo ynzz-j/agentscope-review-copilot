@@ -1,6 +1,7 @@
 package com.ynzz.agentscope.reviewcopilot.factory;
 
 import com.ynzz.agentscope.reviewcopilot.config.ReviewCopilotProperties;
+import io.agentscope.core.formatter.openai.DeepSeekFormatter;
 import io.agentscope.core.model.AnthropicChatModel;
 import io.agentscope.core.model.DashScopeChatModel;
 import io.agentscope.core.model.GeminiChatModel;
@@ -24,7 +25,7 @@ public class ConfigurableModelFactory implements ModelFactory {
 
     @Override
     public Model getModel() {
-        String provider = trim(properties.getModel().getProvider());
+        String provider = properties.getModel().getProvider().trim();
         if (!StringUtils.hasText(provider)) {
             throw new ModelConfigurationException(MISSING_PROVIDER_MESSAGE);
         }
@@ -63,6 +64,7 @@ public class ConfigurableModelFactory implements ModelFactory {
 
     private Model openAIModel(String modelName, String envKey, String defaultBaseUrl) {
         OpenAIChatModel.Builder builder = OpenAIChatModel.builder()
+                .formatter(new DeepSeekFormatter())
                 .apiKey(requireApiKey(envKey, envKey.replace("_API_KEY", "")))
                 .modelName(modelName)
                 .stream(true);
@@ -70,9 +72,9 @@ public class ConfigurableModelFactory implements ModelFactory {
         if (StringUtils.hasText(baseUrl)) {
             builder.baseUrl(baseUrl);
         }
-        String endpointPath = trim(properties.getModel().getEndpointPath());
+        String endpointPath = properties.getModel().getEndpointPath();
         if (StringUtils.hasText(endpointPath)) {
-            builder.endpointPath(endpointPath);
+            builder.endpointPath(endpointPath.trim());
         }
         return builder.build();
     }
@@ -97,21 +99,21 @@ public class ConfigurableModelFactory implements ModelFactory {
     }
 
     private String requireModelName(String provider) {
-        String modelName = trim(properties.getModel().getModelName());
+        String modelName = properties.getModel().getModelName();
         if (!StringUtils.hasText(modelName)) {
             throw new ModelConfigurationException("模型提供商 '" + provider + "' 已配置，但缺少 model-name。");
         }
-        return modelName;
+        return modelName.trim();
     }
 
     private String requireApiKey(String envKey, String providerLabel) {
-        String configured = trim(properties.getModel().getApiKey());
+        String configured = properties.getModel().getApiKey();
         if (StringUtils.hasText(configured)) {
-            return configured;
+            return configured.trim();
         }
-        String fromEnv = trim(System.getenv(envKey));
+        String fromEnv = System.getenv(envKey);
         if (StringUtils.hasText(fromEnv)) {
-            return fromEnv;
+            return fromEnv.trim();
         }
         throw new ModelConfigurationException(
                 "模型提供商 "
@@ -122,14 +124,14 @@ public class ConfigurableModelFactory implements ModelFactory {
     }
 
     private String resolveBaseUrl(String defaultBaseUrl, String envKey) {
-        String configured = trim(properties.getModel().getBaseUrl());
+        String configured = properties.getModel().getBaseUrl();
         if (StringUtils.hasText(configured)) {
-            return configured;
+            return configured.trim();
         }
         if (StringUtils.hasText(envKey)) {
-            String fromEnv = trim(System.getenv(envKey));
+            String fromEnv = System.getenv(envKey);
             if (StringUtils.hasText(fromEnv)) {
-                return fromEnv;
+                return fromEnv.trim();
             }
         }
         return defaultBaseUrl;
@@ -144,9 +146,5 @@ public class ConfigurableModelFactory implements ModelFactory {
             case "model-registry", "agentscope-registry" -> "registry";
             default -> normalized;
         };
-    }
-
-    private String trim(String value) {
-        return value == null ? null : value.trim();
     }
 }
